@@ -11,7 +11,6 @@ pipeline {
 
 	parameters {
 	string(name: 'ORG_NAME', defaultValue: 'DevSecOps-homelab', description: 'GitHub organization or user')
-	string(name: 'PROJECT_NAME', defaultValue: 'online-boutique', description: 'Name of the project')
 	string(name: 'SERVICE_NAME', defaultValue: 'paymentservice', description: 'Name of the service')
 	string(name: 'GIT_BRANCH', defaultValue: 'main', description: 'Git branch to build')
 	string(name: 'IMAGE_TAG', defaultValue: '', description: 'Docker image tag (optional, default = commit SHA)')
@@ -59,7 +58,7 @@ pipeline {
 					withSonarQubeEnv('SonarQube') {
 						sh """
 						sonar-scanner \
-						-Dsonar.projectName=${params.PROJECT_NAME} \
+						-Dsonar.projectName=${params.SERVICE_NAME} \
 						-Dsonar.projectKey=${params.SERVICE_NAME}
 						"""
 					}
