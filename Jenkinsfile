@@ -10,7 +10,7 @@ pipeline {
     }
 
 	parameters {
-	string(name: 'ORG_NAME', defaultValue: 'DevSecOps-homelab', description: 'GitHub organization or user')
+	string(name: 'ORG_NAME', defaultValue: 'DevSecOps-homelab', description: 'GitHub organization or user ')
 	string(name: 'SERVICE_NAME', defaultValue: 'paymentservice', description: 'Name of the service')
 	string(name: 'GIT_BRANCH', defaultValue: 'main', description: 'Git branch to build')
 	string(name: 'IMAGE_TAG', defaultValue: '', description: 'Docker image tag (optional, default = commit SHA)')
