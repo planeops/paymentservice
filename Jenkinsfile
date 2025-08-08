@@ -5,101 +5,117 @@ pipeline {
 		kubernetes {
 			label 'nodejs'
             defaultContainer 'node'
-            yaml libraryResource('pod-templates/nodejs.yaml')
+            yaml libraryResource('pod-templates/nodejs-buildkit.yaml')
         }
     }
 
 	parameters {
-	string(name: 'ORG_NAME', defaultValue: 'DevSecOps-homelab', description: 'GitHub organization or user ')
-	string(name: 'SERVICE_NAME', defaultValue: 'paymentservice', description: 'Name of the service')
-	string(name: 'GIT_BRANCH', defaultValue: 'main', description: 'Git branch to build')
-	string(name: 'IMAGE_TAG', defaultValue: '', description: 'Docker image tag (optional, default = commit SHA)')
+		string(name: 'ORG_NAME', defaultValue: 'DevSecOps-homelab', description: 'GitHub organization or user')
+		string(name: 'SERVICE_NAME', defaultValue: 'paymentservice', description: 'Name of the service')
+		string(name: 'GIT_BRANCH', defaultValue: 'main', description: 'Git branch to build')
+		string(name: 'IMAGE_TAG', defaultValue: '', description: 'Docker image tag (optional, default = commit SHA)')
 	}
 
 	environment {
-		REGISTRY = 'docker.io/volkamana'
 		GIT_REPO_URL = "https://github.com/${params.ORG_NAME}/${params.SERVICE_NAME}"
 		IMAGE_NAME = "${params.SERVICE_NAME}"
 		TAG = "${params.IMAGE_TAG ?: env.GIT_COMMIT.take(7)}"
 		FULL_IMAGE = "${env.REGISTRY}/${env.IMAGE_NAME}:${env.TAG}"
 		GIT_CREDENTIALS_ID = "github-access-token"
+		BUILDKIT_ADDR = 'tcp://buildkit-service.buildkit.svc.cluster.local:1234'
+		S3_ENDPOINT = 'http://minio.minio.svc.cluster.local:9000'
+		REGISTRY = 'harbor-harbor-core.harbor.svc.cluster.local/online-boutique'
 	}
 
     stages {
-		stage('Git Chechout') {
+		stage('Git Checkout') {
 			steps {
-				checkout([
-					$class: 'GitSCM',
-					branches: [[name: "*/${params.GIT_BRANCH}"]],
-					userRemoteConfigs: [[
-						url: env.GIT_REPO_URL,
-						credentialsId: env.GIT_CREDENTIALS_ID
-					]]
-				])
-            }
-        }
+				script {
+					git.checkout(
+						params.GIT_BRANCH,
+						env.GIT_REPO_URL,
+						env.GIT_CREDENTIALS_ID
+					)
+				}
+			}
+		}
 		stage('Compilation') {
 			steps {
 				dir('client') {
-					 sh 'find . -name "*.js" -exec node --check {} +'
+					sh 'find . -name "*.js" -exec node --check {} +'
 				 }
 			 }
 		}
 		stage('Gitleaks Scan') {
-			 steps {
-				 container('gitleaks') {
-				   sh 'gitleaks detect --source . --exit-code 1'
-				 }
-			 }
+			steps {
+				container('gitleaks') {
+					script {
+						gitleaks.scan()
+					}
+				}
+			}
 		}
 		stage('SonarQube Scan') {
 			steps {
 				container('sonar') {
-					withSonarQubeEnv('SonarQube') {
-						sh """
-						sonar-scanner \
-						-Dsonar.projectName=${params.SERVICE_NAME} \
-						-Dsonar.projectKey=${params.SERVICE_NAME}
-						"""
+					script {
+						sonarqubeNode.scan(params.SERVICE_NAME)
 					}
 				}
 			}
 		}
 		stage('SonarQube Quality Gate') {
 			steps {
-				timeout(time: 1, unit: 'HOURS') {
-					waitForQualityGate abortPipeline: true
+				script {
+					sonarqubeNode.qualityGate()
 				}
 			}
 		}
 		stage('Trivy FS Scan') {
 			steps {
 				container('trivy') {
-					sh 'trivy fs --format table -o fs-report.txt .'
+					script {
+						trivy.filesystemScan()
+					}
 				}
-				archiveArtifacts artifacts: 'fs-report.txt', allowEmptyArchive: true
+			archiveArtifacts artifacts: 'fs-report.txt', allowEmptyArchive: true
 			}
 		}
-		stage('Build API image') {
+		stage('Build image') {
 			steps {
-				container('kaniko') {
-					sh """
-						/kaniko/executor \
-						--context `pwd` \
-						--dockerfile `pwd`/Dockerfile \
-						--destination=${env.FULL_IMAGE} \
-						--cleanup \
-						--verbosity=info
-					"""
+				container('buildkit') {
+					script {
+						buildctl.build(
+							env.BUILDKIT_ADDR,
+							env.S3_ENDPOINT,
+							params.SERVICE_NAME
+						)
+					}
 				}
 			}
 		}
-		stage('Scan pushed image') {
+		stage('Trivy Image Scan') {
 			steps {
 				container('trivy') {
-					sh "trivy image --format table -o image-report.txt ${env.FULL_IMAGE}"
+					script {
+						trivy.imageScan()
+					}
 				}
-				archiveArtifacts artifacts: 'image-report.txt', allowEmptyArchive: true
+			archiveArtifacts artifacts: 'image-report.txt', allowEmptyArchive: true
+			}
+		}
+		stage('Push image') {
+			steps {
+				container('buildkit') {
+					script {
+						buildctl.push(
+							env.BUILDKIT_ADDR,
+							env.S3_ENDPOINT,
+							params.SERVICE_NAME,
+							env.FULL_IMAGE
+						)
+					}
+				}
 			}
 		}
     }
