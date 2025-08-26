@@ -29,9 +29,8 @@ jobs:
 #          sarif_file: gitleaks.sarif
 
       - name: SonarQube Scan
-        env:
-          SONAR_SCANNER_OPTS: "-Djava.home=/opt/java/jdk-17.0.10+7"
         run: |
+          java -XshowSettings:properties -version
           echo $JAVA_HOME
           echo $PATH
           java -version
