@@ -1,8 +1,11 @@
 name: Self-hosted test
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
+
 jobs:
   test:
-    runs-on: [default]
+    runs-on: [nodejs]
     steps:
-      - run: echo "Hi"
+      - name: Checkout
+        uses: actions/checkout@v4
