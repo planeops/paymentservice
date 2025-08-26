@@ -6,10 +6,10 @@ on:
 jobs:
   test:
     runs-on: [nodejs]
-    permissions:
-      contents: read
-      actions: read
-      security-events: write
+#    permissions:
+#      contents: read
+#      actions: read
+#      security-events: write
 
     steps:
       - name: Checkout
