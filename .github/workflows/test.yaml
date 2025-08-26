@@ -29,8 +29,8 @@ jobs:
 #          sarif_file: gitleaks.sarif
 
       - name: SonarQube Scan
-        env:
-          SONAR_SCANNER_OPTS: "-Djava.home=/usr/lib/jvm/java-17-openjdk-amd64"
+#        env:
+#          SONAR_SCANNER_OPTS: "-Djava.home=/usr/lib/jvm/java-17-openjdk-amd64"
         run: |
           echo $JAVA_HOME
           echo $PATH
