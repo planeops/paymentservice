@@ -8,6 +8,7 @@ jobs:
     runs-on: [nodejs]
     permissions:
       contents: read
+      actions: read
       security-events: write
 
     steps:
