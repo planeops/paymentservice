@@ -35,7 +35,7 @@ jobs:
           echo $JAVA_HOME
           echo $PATH
           java -version
-          which java
+#          which java
           sonar-scanner --version
           sonar-scanner \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
