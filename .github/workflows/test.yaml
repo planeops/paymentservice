@@ -1,0 +1,8 @@
+name: Self-hosted test
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: [default]
+    steps:
+      - run: echo "Hi"
