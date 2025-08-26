@@ -30,7 +30,6 @@ jobs:
 
       - name: SonarQube Scan
         run: |
-          java -XshowSettings:properties -version
           echo $JAVA_HOME
           echo $PATH
           java -version
