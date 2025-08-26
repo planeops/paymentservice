@@ -30,11 +30,6 @@ jobs:
 
       - name: SonarQube Scan
         run: |
-          echo $JAVA_HOME
-          echo $PATH
-          java -version
-          which java
-          sonar-scanner --version
           sonar-scanner \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
