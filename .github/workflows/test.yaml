@@ -29,10 +29,7 @@ jobs:
           sarif_file: gitleaks.sarif
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v1
-#        with:
-#          args: >
-#            -Dsonar.projectBaseDir=.
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          sonar-scanner \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
