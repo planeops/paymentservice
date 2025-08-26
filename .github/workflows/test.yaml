@@ -10,7 +10,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Compilation
+        run: find . -name "*.js" -exec node --check {} +
+
       - name: Run gitleaks scan
-        run: |
-          ls
-          gitleaks detect --source . --exit-code 1
+        run: gitleaks detect --source . --exit-code 1
+
