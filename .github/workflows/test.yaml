@@ -30,6 +30,8 @@ jobs:
 
       - name: SonarQube Scan
         run: |
+          java -version
+          sonar-scanner --version
           sonar-scanner \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
