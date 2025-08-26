@@ -29,8 +29,24 @@ jobs:
 #          sarif_file: gitleaks.sarif
 
       - name: SonarQube Scan
-        run: |
-          sonar-scanner --version
-          sonar-scanner \
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+#      # Check the Quality Gate status.
+#      - name: SonarQube Quality Gate check
+#        id: sonarqube-quality-gate-check
+#        uses: sonarsource/sonarqube-quality-gate-action@master
+#        with:
+#          pollingTimeoutSec: 600
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+#
+#      - name: SonarQube Scan
+#        run: |
+#          sonar-scanner --version
+#          sonar-scanner \
+#            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+#            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
