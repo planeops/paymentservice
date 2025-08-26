@@ -10,5 +10,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Gitleaks scan
-        uses: gitleaks/gitleaks-action@v2
+      - name: Run gitleaks scan
+        run: gitleaks detect --source . --exit-code 1
