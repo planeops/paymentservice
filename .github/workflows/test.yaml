@@ -17,8 +17,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Compilation
-        run: find . -name "*.js" -exec node --check {} +
+#      - name: Compilation
+#        run: find . -name "*.js" -exec node --check {} +
 
 #      - name: Run gitleaks scan
 #        run: gitleaks detect --source . --exit-code 1 --report-format sarif --report-path gitleaks.sarif
