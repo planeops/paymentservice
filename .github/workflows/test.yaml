@@ -79,7 +79,7 @@ jobs:
             --server http://trivy-server.default:4954 \
             --severity HIGH,CRITICAL \
             --output trivy.json \
-            --output trivy.sarif
+            --output trivy.sarif \
             ${{ env.IMAGE }}
           ls
           
