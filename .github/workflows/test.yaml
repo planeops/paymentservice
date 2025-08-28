@@ -18,22 +18,10 @@ jobs:
 
       - name: Run Gitleaks
         run: |
-          gitleaks detect --source . --report-format sarif --report-path gitleaks.sarif || true
-
-      - name: Check SARIF has content
-        id: check_sarif
-        run: |
-          if jq '.runs | length > 0' gitleaks.sarif; then
-            echo "has_results=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_results=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Upload Gitleaks SARIF
-        if: steps.check_sarif.outputs.has_results == 'true'
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: gitleaks.sarif
+          gitleaks detect --source . \
+            --report-format sarif \
+            --report-path gitleaks.sarif \
+            --exit-code 1
 
 #      - name: SonarQube Scan
 #        uses: sonarsource/sonarqube-scan-action@master
