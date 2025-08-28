@@ -70,3 +70,13 @@ jobs:
             --export-cache type=s3,mode=max,name=${SERVICE_NAME},endpoint_url=${CACHE_ADDR},use_path_style=true \
             --import-cache type=s3,name=${SERVICE_NAME},endpoint_url=${CACHE_ADDR},use_path_style=true \
             --output type=image,name=${fullImage},push=true
+
+      - name: Run Trivy scan via remote server
+        run: |
+          trivy client \
+            --remote http://trivy-server.trivy.svc.cluster.local:4954 \
+            --exit-code 1 \
+            --severity HIGH,CRITICAL \
+            $IMAGE
+        env:
+          IMAGE: ghcr.io/planeops/paymentservice/paymentservice:latest
