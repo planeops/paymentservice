@@ -34,7 +34,6 @@ jobs:
 
   sonar-analysis:
     runs-on: [nodejs]
-    needs: security-scan
 
     steps:
       - name: Checkout
@@ -57,11 +56,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-
-
-  docker-build:
+  build-and-push:
     runs-on: [nodejs]
-    needs: sonar-analysis
+    needs:
+      - sonar-analysis
+      - security-scan
     steps:
 
       - name: Checkout
