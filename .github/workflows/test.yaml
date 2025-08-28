@@ -54,7 +54,7 @@ jobs:
           S3_ENDPOINT: http://minio.minio.svc.cluster.local:9000
           SERVICE_NAME: paymentservice
         run: |
-          buildctl --addr=${buildkitAddr} build \
+          buildctl --addr=${BUILDKIT_ADDR} build \
             --frontend=dockerfile.v0 \
             --local context=. \
             --local dockerfile=. \
