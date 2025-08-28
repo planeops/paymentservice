@@ -88,6 +88,7 @@ jobs:
           trivy image \
             --server http://trivy-server.default:4954 \
             --severity HIGH,CRITICAL \
+            --format sarif \
             --output trivy.sarif \
             ${{ env.IMAGE }}
           ls
