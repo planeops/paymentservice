@@ -21,7 +21,8 @@ jobs:
         run: find . -name "*.js" -exec node --check {} +
 
       - name: Run gitleaks scan
-        run: gitleaks detect --source . --exit-code 1 --report-format sarif --report-path gitleaks.sarif
+        run: gitleaks detect --source . --exit-code 1 \ 
+          --report-format sarif --report-path gitleaks.sarif
 #
 #      - name: Upload SARIF to GitHub Security
 #        uses: github/codeql-action/upload-sarif@v3
@@ -35,7 +36,6 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@master
         with:
           pollingTimeoutSec: 600
