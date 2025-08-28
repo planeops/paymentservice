@@ -75,9 +75,9 @@ jobs:
         env:
           IMAGE: ghcr.io/planeops/paymentservice/paymentservice:latest
         run: |
-          trivy \
-            --remote http://trivy-server.default:4954 \
+          trivy image \
+            --server http://trivy-server.default:4954 \
             --exit-code 1 \
             --severity HIGH,CRITICAL \
-          ${{ env.IMAGE }}
-            
+            ${{ env.IMAGE }}
+
