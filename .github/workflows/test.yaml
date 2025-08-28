@@ -20,6 +20,9 @@ jobs:
       - name: Compilation
         run: find . -name "*.js" -exec node --check {} +
 
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #      - name: Run gitleaks scan
 #        run: gitleaks detect --source . --exit-code 1 --report-format sarif --report-path gitleaks.sarif
 #
@@ -42,10 +45,3 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-#
-#      - name: SonarQube Scan
-#        run: |
-#          sonar-scanner --version
-#          sonar-scanner \
-#            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-#            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
