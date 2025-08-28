@@ -19,7 +19,7 @@ jobs:
       - name: Run gitleaks scan
         run: gitleaks detect --source . --exit-code 1 \ 
           --report-format sarif --report-path gitleaks.sarif
-#
+
 #      - name: Upload SARIF to GitHub Security
 #        uses: github/codeql-action/upload-sarif@v3
 #        with:
@@ -47,3 +47,17 @@ jobs:
           format: 'sarif'
           output: 'trivy-fs.sarif'
           severity: 'CRITICAL'
+
+      - name: Build Image
+        env:
+          BUILDKIT_ADDR: tcp://buildkit-service.buildkit.svc.cluster.local:1234
+          S3_ENDPOINT: http://minio.minio.svc.cluster.local:9000
+          SERVICE_NAME: paymentservice
+        run: |
+          buildctl --addr=${buildkitAddr} build \
+            --frontend=dockerfile.v0 \
+            --local context=. \
+            --local dockerfile=. \
+            --export-cache type=s3,mode=max,name=${SERVICE_NAME},endpoint_url=${S3_ENDPOINT},use_path_style=true \
+            --import-cache type=s3,name=${SERVICE_NAME},endpoint_url=${S3_ENDPOINT},use_path_style=true \
+            --output type=oci,dest=image.tar
