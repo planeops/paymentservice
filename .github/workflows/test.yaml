@@ -20,10 +20,10 @@ jobs:
         run: gitleaks detect --source . --exit-code 1 \ 
           --report-format sarif --report-path gitleaks.sarif
 
-#      - name: Upload SARIF to GitHub Security
-#        uses: github/codeql-action/upload-sarif@v3
-#        with:
-#          sarif_file: gitleaks.sarif
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks.sarif
 
 #      - name: SonarQube Scan
 #        uses: sonarsource/sonarqube-scan-action@master
@@ -78,7 +78,11 @@ jobs:
           trivy image \
             --server http://trivy-server.default:4954 \
             --severity HIGH,CRITICAL \
-            --output trivy.json,trivy.sarif \
+            --output trivy.sarif \
             ${{ env.IMAGE }}
           ls
           
+      - name: Upload Trivy SARIF
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: trivy.sarif
