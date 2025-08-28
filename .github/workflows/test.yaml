@@ -23,12 +23,12 @@ jobs:
             --report-path gitleaks.sarif \
             --exit-code 1
 
-#      - name: Run Sonar Scanner
-#        run: |
-#          sonar-scanner \
-#            -Dsonar.sources=. \
-#            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-#            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: Run Sonar Scanner
+        run: |
+          sonar-scanner \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 #
 #      - name: Check SonarQube Quality Gate
 #        env:
@@ -47,11 +47,11 @@ jobs:
 #          [ "$RESULT" = "OK" ] || exit 1
 
 
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+#      - name: SonarQube Scan
+#        uses: sonarsource/sonarqube-scan-action@master
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: SonarQube Quality Gate check
         uses: sonarsource/sonarqube-quality-gate-action@master
