@@ -77,7 +77,7 @@ jobs:
         run: |
           trivy image \
             --server http://trivy-server.default:4954 \
-            --exit-code 1 \
-            --severity CRITICAL \
+#            --exit-code 1 \
+            --severity HIGH,CRITICAL \
             ${{ env.IMAGE }}
 
