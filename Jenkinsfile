@@ -94,7 +94,7 @@ pipeline {
 				}
 			}
 		}
-		stage('Trivy Image Scan') {
+		stage('Trivy Image Sca n') {
 			steps {
 				container('trivy') {
 					script {
